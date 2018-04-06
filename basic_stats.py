@@ -1,6 +1,6 @@
 import json
 
-DATA = json.load(open('data.json'))
+DATA = json.load(open('followers.json'))
 
 account = 'dam_io'
 print(account, 'followers with the most followers')
@@ -9,7 +9,15 @@ data.sort(key=lambda x: -x['followers_count'])
 for x in data[:20]:
 	print(x['followers_count'], x['name'], x['screen_name'])
 
+print()
+print(account, 'followers with the most friends')
+data = DATA[account]
+data.sort(key=lambda x: -x['friends_count'])
+for x in data[:40]:
+	print(x['friends_count'], x['name'], x['screen_name'])
+
 """
+print()
 print()
 print('who are', account, 'followers top following followers ?')
 data = [f for k, followers in json.load(open('data.json')).items() if k != account for f in followers]

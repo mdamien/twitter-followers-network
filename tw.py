@@ -1,7 +1,7 @@
 from TwitterAPI import TwitterAPI, TwitterRestPager, TwitterError
 import json, time
 
-from .secrets import consumer_key, consumer_secret, access_token_key, access_token_secret
+from secrets import consumer_key, consumer_secret, access_token_key, access_token_secret
 
 api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
 
@@ -12,14 +12,14 @@ data_followers = json.load(open('followers.json'))
 main_account = "dam_io"
 while True:
     try:
-        for account_data in sorted(data_followers[main_account], key=lambda x: x['followers_count']):
+        for account_data in sorted(data_followers[main_account], key=lambda x: x['friends_count']):
             account = account_data["screen_name"]
-            if account not in data:
-                print('friends/', account)
+            if account not in data or account_data['friends_count'] != len(data[account]):
+                print('friends/', account, '(', account_data['friends_count'], ')')
                 if account_data['protected']:
                     print('-> protected')
                     continue
-                data[account] = []
+                data[account] = data.get(account, []) # TODO: complete when rate limit is hit during iteration
                 count = 0
 
                 r = TwitterRestPager(api, 'friends/list', {'screen_name': account, 'count': 200})

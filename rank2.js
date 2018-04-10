@@ -8,6 +8,8 @@ const graph = new Graph();
 var followers = require("./followers.json");
 var friends = require("./friends.json");
 var account = "dam_io";
+var account = "bydorian";
+var account = "medialab_ScPo";
 
 add = (x, type) => graph.addNode(x.screen_name, {
 	label: x.screen_name,
@@ -20,21 +22,29 @@ add = (x, type) => graph.addNode(x.screen_name, {
 	status: x.status ? x.status.text : '',
 	statuses_count: x.statuses_count,
 	favourites_count: x.favourites_count,
-	description: x.description.replace('\u0019','').replace('',''),
+	description: x.description.replace(/[^\x20-\x7E]+/g, ""),
 	profile_img: x.profile_image_url_https,
 })
 
 followers[account].forEach(x =>
-	add(x, 'internal')
+	add(x, 'follow_you')
 );
 Object.keys(friends).forEach(key => {0
 	if (key != account) friends[key].forEach(x => {
 		if (x.screen_name == account) return;
-		if (!graph.hasNode(x.screen_name)) {
+		if (!graph.hasNode(key)) {
 			return;
-			add(x, 'external')
 		}
-		graph.addEdge(key, x.screen_name);
+		if (!graph.hasNode(x.screen_name)) {
+			return; // uncomment to have the 
+			add(x, 'followed_by_your_followers')
+		}
+		if (!graph.hasEdge(key, x.screen_name)) {
+			graph.addEdge(key, x.screen_name);
+		} else {
+			// WTF
+			console.log('duplicate edge !!', key, x.screen_name)
+		}
 	})
 });
 
@@ -44,8 +54,10 @@ console.log('Number of edges', graph.size);
 // console.log('Nodes', graph.nodes());
 
 
+// TODO http://labs.polsys.net/tools/rankflow/
+
 // To compute pagerank and return the score per node:
-const p = pagerank(graph);
+const p = pagerank(graph); // TODO/ LOG() IT ? TO BE MORE LINEAR
 var arr = Object.keys(p).map(k => [p[k], k])
 arr.sort((a,b) => a[0] - b[0])
 arr.slice(arr.length-30,arr.length).forEach(x => console.log(x, graph.inDegree(x[1])))
@@ -61,6 +73,10 @@ g.forEachLinkedNode('hello', function(linkedNode, link){
     console.dir(link); // link object itself
 });
 */
+
+var louvain = require('graphology-communities-louvain');
+louvain.assign(graph);
+
 
 pagerank.assign(graph);
 var gexf = require('graphology-gexf/browser');

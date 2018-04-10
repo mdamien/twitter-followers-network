@@ -1,7 +1,7 @@
 # FAIRE LE DIAGRAM RANK CHANGE (RANK FLOW)
 
 from TwitterAPI import TwitterAPI, TwitterRestPager, TwitterError
-import json, time
+import json, time, sys
 
 from secrets import consumer_key, consumer_secret, access_token_key, access_token_secret
 
@@ -11,10 +11,7 @@ data = json.load(open('friends.json'))
 # json.dump(data, open('friends.json', 'w'), indent=2, sort_keys=True, ensure_ascii=False)
 data_followers = json.load(open('followers.json'))
 
-main_account = "dam_io"
-main_account = "bydorian"
-main_account = "f0rkfr"
-main_account = "medialab_ScPo"
+main_account = sys.argv[1]
 
 while True:
     try:

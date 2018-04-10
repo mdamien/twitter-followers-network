@@ -7,9 +7,8 @@ const graph = new Graph();
 
 var followers = require("./followers.json");
 var friends = require("./friends.json");
-var account = "dam_io";
-var account = "bydorian";
-var account = "medialab_ScPo";
+var account = process.argv[2];
+console.log(account);
 
 add = (x, type) => graph.addNode(x.screen_name, {
 	label: x.screen_name,

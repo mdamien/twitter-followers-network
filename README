@@ -1,0 +1,15 @@
+# collect data
+echo "{}" > friends.json
+echo "{}" > followers.json
+pip install TwitterAPI==2.4.6
+
+add secrets.py with your twitter secrets
+
+python tw.py <twitter_account>
+
+# data to graph
+npm i graphology graphology-pagerank graphology-communities-louvain graphology-gexf
+node rank2.js <twitter_account>
+
+# result in graph.gexf => use gephi to make something pretty
+

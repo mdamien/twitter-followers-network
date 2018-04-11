@@ -5,10 +5,12 @@ const pagerank = require('graphology-pagerank');
 
 const graph = new Graph();
 
-var followers = require("./followers.json");
-var friends = require("./friends.json");
+console.log('loading followers')
+var followers = require("./algoglitch/followers.json");
+console.log('loading friends')
+var friends = require("./algoglitch/friends.json");
 var account = process.argv[2];
-console.log(account);
+console.log('processing', account);
 
 add = (x, type) => graph.addNode(x.screen_name, {
 	label: x.screen_name,
@@ -25,9 +27,12 @@ add = (x, type) => graph.addNode(x.screen_name, {
 	profile_img: x.profile_image_url_https,
 })
 
+console.log('add followers')
 followers[account].forEach(x =>
 	add(x, 'follow_you')
 );
+
+console.log('add friends')
 Object.keys(friends).forEach(key => {0
 	if (key != account) friends[key].forEach(x => {
 		if (x.screen_name == account) return;
@@ -35,7 +40,7 @@ Object.keys(friends).forEach(key => {0
 			return;
 		}
 		if (!graph.hasNode(x.screen_name)) {
-			return; // uncomment to have the 
+			return; // uncomment to have the
 			add(x, 'followed_by_your_followers')
 		}
 		if (!graph.hasEdge(key, x.screen_name)) {

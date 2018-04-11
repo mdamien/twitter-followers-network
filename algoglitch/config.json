@@ -13,18 +13,18 @@
     "title": ""
   },
   "legend": {
-    "edgeLabel": "",
-    "colorLabel": "",
-    "nodeLabel": ""
+    "edgeLabel": "Follow",
+    "colorLabel": "Louvain Community",
+    "nodeLabel": "Twitter user"
   },
   "features": {
     "search": true,
-    "groupSelectorAttribute": false,
+    "groupSelectorAttribute": "type",
     "hoverBehavior": "default"
   },
   "informationPanel": {
-    "groupByEdgeDirection": false,
-    "imageAttribute": false
+    "groupByEdgeDirection": true,
+    "imageAttribute": "profile_img"
   },
   "sigma": {
     "drawingProperties": {

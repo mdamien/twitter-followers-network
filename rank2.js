@@ -6,9 +6,9 @@ const pagerank = require('graphology-pagerank');
 const graph = new Graph();
 
 console.log('loading followers')
-var followers = require("./algoglitch/followers.json");
+var followers = require("./followers.json");
 console.log('loading friends')
-var friends = require("./algoglitch/friends.json");
+var friends = require("./friends.json");
 var account = process.argv[2];
 console.log('processing', account);
 
@@ -44,7 +44,20 @@ Object.keys(friends).forEach(key => {0
 			add(x, 'followed_by_your_followers')
 		}
 		if (!graph.hasEdge(key, x.screen_name)) {
-			graph.addEdge(key, x.screen_name);
+			if (friends[x.screen_name]) {
+				console.log('wow', key, 'follows', x.screen_name, 'but does', x.screen_name, 'follows', key)
+				var is_followed_back = false;
+				friends[x.screen_name].forEach(y => {
+					if (y.screen_name == key) {
+						console.log('waazzza')
+						is_followed_back = true
+					}
+				})
+				if (is_followed_back) {
+					graph.addEdge(key, x.screen_name);
+					graph.addEdge(x.screen_name, key);
+				}
+			}
 		} else {
 			// WTF
 			console.log('duplicate edge !!', key, x.screen_name)
@@ -83,7 +96,7 @@ louvain.assign(graph);
 
 
 pagerank.assign(graph);
-var gexf = require('graphology-gexf/browser');
+var gexf = require('graphology-gexf');
 var gexfString = gexf.write(graph);
 var fs = require('fs');
 fs.writeFile("graph.gexf", gexfString, function(err) {

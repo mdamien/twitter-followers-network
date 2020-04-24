@@ -46,11 +46,29 @@ while True:
                 data[account] = data.get(account, []) # TODO: complete when rate limit is hit during iteration
                 count = 0
 
+                while True:
+                    try:
+                        import os
+                        cmd = 'rm following.json;twint -u %s --following --json -o following.json > /dev/null' % account
+                        print(cmd)
+                        os.system(cmd)
+                        with open('following.json') as f:
+                            for line in f:
+                                item = json.loads(line)
+                                data[account].append({
+                                    'screen_name': item['username']
+                                })
+                        break
+                    except FileNotFoundError:
+                        pass
+
+                """
                 r = TwitterRestPager(api, 'friends/list', {'screen_name': account, 'count': 200})
                 for item in r.get_iterator(wait=60):
                     data[account].append(item)
                     if len(data[account]) % 200 == 0:
                         print('....', len(data[account]))
+                """
                 print(' ->', len(data[account]))
                 json.dump(data, open('friends.json', 'w'), indent=2, sort_keys=True, ensure_ascii=False)
         break

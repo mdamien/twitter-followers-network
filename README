@@ -1,7 +1,7 @@
 # collect data
-echo "{}" > friends.json
+mkdir friends
 echo "{}" > followers.json
-pip install TwitterAPI==2.4.6
+pip install TwitterAPI==2.4.6 twint
 
 add secrets.py with your twitter secrets
 

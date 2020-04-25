@@ -44,19 +44,24 @@ Object.keys(friends).forEach(key => {0
 			add(x, 'followed_by_your_followers')
 		}
 		if (!graph.hasEdge(key, x.screen_name)) {
-			if (friends[x.screen_name]) {
-				console.log('wow', key, 'follows', x.screen_name, 'but does', x.screen_name, 'follows', key)
-				var is_followed_back = false;
-				friends[x.screen_name].forEach(y => {
-					if (y.screen_name == key) {
-						console.log('waazzza')
-						is_followed_back = true
+
+			if (process.argv[3]) {
+				if (friends[x.screen_name]) {
+					console.log('wow', key, 'follows', x.screen_name, 'but does', x.screen_name, 'follows', key)
+					var is_followed_back = false;
+					friends[x.screen_name].forEach(y => {
+						if (y.screen_name == key) {
+							console.log('waazzza')
+							is_followed_back = true
+						}
+					})
+					if (is_followed_back) {
+						graph.addEdge(key, x.screen_name);
+						graph.addEdge(x.screen_name, key);
 					}
-				})
-				if (is_followed_back) {
-					graph.addEdge(key, x.screen_name);
-					graph.addEdge(x.screen_name, key);
 				}
+			} else {
+				graph.addEdge(key, x.screen_name);
 			}
 		} else {
 			// WTF

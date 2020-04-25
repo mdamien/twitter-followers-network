@@ -1,13 +1,13 @@
-# FAIRE LE DIAGRAM RANK CHANGE (RANK FLOW)
-
 from TwitterAPI import TwitterAPI, TwitterRestPager, TwitterError
 import json, time, sys, glob
+
+import random
+import os.path
 
 from secrets import consumer_key, consumer_secret, access_token_key, access_token_secret
 
 api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
 
-# json.dump(data, open('friends.json', 'w'), indent=2, sort_keys=True, ensure_ascii=False)
 data_followers = json.load(open('followers.json'))
 
 main_account = sys.argv[1]
@@ -33,8 +33,6 @@ while True:
         json.dump(data_followers, open('followers.json', 'w'), indent=2, sort_keys=True, ensure_ascii=False)
         break
 
-import random
-import os.path
 
 followers = data_followers[main_account]
 random.shuffle(followers)
@@ -53,21 +51,22 @@ for account_data in followers:
     if os.path.exists('friends/%s.json' % account):
     	continue
 
-    while True:
-        try:
-            import os
-            cmd = 'rm following.json;twint -u %s --following --json -o following.json > /dev/null' % account
-            print(cmd)
-            os.system(cmd)
-            with open('following.json') as f:
-                for line in f:
-                    item = json.loads(line)
-                    data_account.append({
-                        'screen_name': item['username']
-                    })
-            break
-        except FileNotFoundError:
-            pass
+    try:
+        import os
+        cmd = 'twint -u %s --following --json -o %s.json > /dev/null' % (account, account)
+        print(cmd)
+        os.system(cmd)
+        with open(account + '.json') as f:
+            for line in f:
+                item = json.loads(line)
+                data_account.append({
+                    'screen_name': item['username']
+                })
+        os.system('rm %s.json' % account)
+        break
+    except FileNotFoundError:
+        pass
+    time.sleep(1)
 
     print(' ->', len(data_account))
     json.dump(data_account, open('friends/%s.json' % account, 'w'), indent=2, sort_keys=True, ensure_ascii=False)

@@ -37,37 +37,38 @@ while True:
 followers = data_followers[main_account]
 random.shuffle(followers)
 
-for account_data in followers:
-    account = account_data["screen_name"]
+while True:
+    for account_data in followers:
+        account = account_data["screen_name"]
 
-    print('friends/', account, ' (', account_data['friends_count'], ')', sep='')
-    if account_data['protected']:
-        print('-> protected')
-        continue
-    count = 0
+        print('friends/', account, ' (', account_data['friends_count'], ')', sep='')
+        if account_data['protected']:
+            print('-> protected')
+            continue
+        count = 0
 
-    data_account = []
+        data_account = []
 
-    if os.path.exists('friends/%s.json' % account):
-    	continue
+        if os.path.exists('friends/%s.json' % account):
+            continue
 
-    try:
-        import os
-        cmd = 'twint -u %s --following --json -o %s.json > /dev/null' % (account, account)
-        print(cmd)
-        os.system(cmd)
-        with open(account + '.json') as f:
-            for line in f:
-                item = json.loads(line)
-                data_account.append({
-                    'screen_name': item['username']
-                })
-        os.system('rm %s.json' % account)
-        break
-    except FileNotFoundError:
-        pass
-    time.sleep(1)
+        try:
+            import os
+            cmd = 'twint -u %s --following --json -o %s.json > /dev/null' % (account, account)
+            print(cmd)
+            os.system(cmd)
+            with open(account + '.json') as f:
+                for line in f:
+                    item = json.loads(line)
+                    data_account.append({
+                        'screen_name': item['username']
+                    })
+            os.system('rm %s.json' % account)
+            break
+        except FileNotFoundError:
+            pass
+        time.sleep(1)
 
-    print(' ->', len(data_account))
-    json.dump(data_account, open('friends/%s.json' % account, 'w'), indent=2, sort_keys=True, ensure_ascii=False)
+        print(' ->', len(data_account))
+        json.dump(data_account, open('friends/%s.json' % account, 'w'), indent=2, sort_keys=True, ensure_ascii=False)
 

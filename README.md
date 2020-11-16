@@ -1,5 +1,10 @@
 # twitter followers network
 
+- [demo dam_io](http://dam.io/twitter-followers-network/dam_io/)
+- [demo medialab_ScPo](http://dam.io/twitter-followers-network/medialab_ScPo/)
+- [demo anvaka](http://dam.io/twitter-followers-network/anvaka/)
+- [demo algoglitch](http://dam.io/twitter-followers-network/algoglitch/)
+
 ```
 # collect data
 mkdir friends

@@ -34,56 +34,30 @@ while True:
         break
 
 
-followers = data_followers[main_account]
-random.shuffle(followers)
-
-from selenium import webdriver
-from bs4 import BeautifulSoup
-
-driver = webdriver.Firefox()
-driver.get("https://twitter.com")
-input("login and then type enter:")
+data = json.load(open('friends.json'))
 
 while True:
-    for account_data in followers:
-        account = account_data["screen_name"]
+    try:
+        for account_data in sorted(data_followers[main_account], key=lambda x: x['followers_count']):
+            account = account_data["screen_name"]
+            if account not in data:
+                print('friends/', account)
+                if account_data['protected']:
+                    print('-> protected')
+                    continue
+                data[account] = []
+                count = 0
 
-        print('friends/', account, ' (', account_data['friends_count'], ')', sep='')
-        if account_data['protected']:
-            print('-> protected')
-            continue
-
-        if os.path.exists('friends/%s.json' % account):
-            continue
-
-        followers = set()
-
-        driver.get("https://twitter.com/" + account + '/following')
-
-        time.sleep(5)
-
-        prev_len = -1
-        while len(followers) > prev_len:
-            prev_len = len(followers)
-
-            html = driver.page_source
-            soup = BeautifulSoup(html, 'lxml')
-
-            for span in soup.select('span'):
-                text = span.text.split(' ')[0]
-                if text.startswith('@'):
-                    text = text.replace('@', '')
-                    if text != account and text != 'dam_io':
-                        followers.add(text)
-            driver.execute_script("window.scrollTo(0, 100000)")
-            time.sleep(1)
-
-        data_account = []
-        for follower in followers:
-            data_account.append({
-                'screen_name': follower,
-            })
-
-        print(' ->', len(data_account))
-        json.dump(data_account, open('friends/%s.json' % account, 'w'), indent=2, sort_keys=True, ensure_ascii=False)
-
+                r = TwitterRestPager(api, 'friends/list', {'screen_name': account, 'count': 200})
+                for item in r.get_iterator():
+                    data[account].append(item)
+                print(' ->', len(data[account]))
+                json.dump(data, open('friends.json', 'w'), indent=2, sort_keys=True, ensure_ascii=False)
+        break
+    except TwitterError.TwitterRequestError as e:
+        print(e)
+        time.sleep(2*60) # 15 min between resets of API limit
+    except KeyboardInterrupt as e:
+        print('saviiinggg...')
+        json.dump(data, open('friends.json', 'w'), indent=2, sort_keys=True, ensure_ascii=False)
+        break

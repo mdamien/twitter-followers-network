@@ -15,7 +15,7 @@ add secrets.py with your twitter secrets
 
 python tw.py <twitter_account> # run multiple instances in parrallel to make it faster
 
-python make_friends.json # at the end
+python make_friends.py # at the end
 
 # data to graph
 npm i graphology graphology-pagerank graphology-communities-louvain graphology-gexf
